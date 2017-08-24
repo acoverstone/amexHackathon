@@ -9,32 +9,57 @@
 
 <ion-content padding>
   <!-- If cart is empty -->
-  <p *ngIf="(shoppingCart).length <= 0">You currently have no items in your cart. Scan items by pressing the button in the top right.</p>
+  <div *ngIf="(shoppingCart).length <= 0">
+    <p text-center>You currently have no items in your cart. Select your store and scan items by pressing the button in the top right.</p>
 
+    <ion-item>
+        <ion-label>
+          Select Store
+        </ion-label>
+        <ion-select [(ngModel)]="selectedStore">
+          <ion-option value="Publix">Publix</ion-option>
+          <ion-option value="Walmart">Walmart</ion-option>
+          <ion-option value="Sam's Club">Sam's Club</ion-option>
+          <ion-option value="Target">Target</ion-option>
+          <ion-option value="Best Buy">Best Buy</ion-option>
+          <ion-option value="Macy's">Macy's</ion-option>
+        </ion-select>
+    </ion-item>
+  </div>
+  
   <!-- If cart is not empty -->
-  <ion-list no-border *ngIf="(shoppingCart).length > 0">
-    <ion-list-header>
-      Cart
-    </ion-list-header>
-    <ion-item-sliding *ngFor="let shopItem of shoppingCart" #slidingItem>
-      <ion-item text-wrap>
-        <ion-note item-start class="quantity">{{shopItem.quantity}}</ion-note>
-        {{shopItem.name}}
-        <ion-note item-end>$ {{shopItem.price}}</ion-note>
-      </ion-item>
-      <ion-item-options side="left">
-        <button ion-button color="danger"><ion-icon name="ios-trash" (click)="removeItemFromCart(shopItem.name)"></ion-icon></button>
-      </ion-item-options>
-    </ion-item-sliding>
+  <div *ngIf="(shoppingCart).length > 0">
+    <ion-list no-border >
+      <ion-list-header>
+        Cart - {{selectedStore}}
+      </ion-list-header>
+      <ion-item-sliding *ngFor="let shopItem of shoppingCart" #slidingItem>
+        <ion-item text-wrap>
+          <ion-note item-start class="quantity">{{shopItem.quantity}}</ion-note>
+          {{shopItem.name}}
+          <ion-note item-end>$ {{shopItem.price}}</ion-note>
+        </ion-item>
+        <ion-item-options side="left">
+          <button ion-button color="danger"><ion-icon name="ios-trash" (click)="removeItemFromCart(shopItem.name)"></ion-icon></button>
+        </ion-item-options>
+      </ion-item-sliding>
 
-  </ion-list>
+    </ion-list>
 
-  <ion-list no-border *ngIf="(shoppingCart).length > 0">
-    <ion-list-header>
-      Total
-    </ion-list-header>
-    <ion-item>Tax: $ {{calculateTax()}}</ion-item>
-    <ion-item>Final Price: $ {{calculateFinalPrice()}}</ion-item>
-  </ion-list>
+    <ion-list no-border>
+      <ion-list-header>
+        Total
+      </ion-list-header>
+      <ion-item>Tax: $ {{calculateTax()}}</ion-item>
+      <ion-item>Final Price: $ {{calculateFinalPrice()}}</ion-item>
+    </ion-list>
+
+    <ion-buttons text-center>
+      <button ion-button color="light" (click)="clearCart()">Clear Cart</button>
+      <button ion-button (click)="checkout()">Checkout</button>
+    </ion-buttons>
+
+  </div>
+  
 
 </ion-content>

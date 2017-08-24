@@ -1,11 +1,27 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      About
+      Purchase History
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
+
+	<div *ngIf="(transactions).length <= 0">
+    <p text-center>You have no recent transactions to list.</p>
+  </div>
+
+  <div *ngIf="(transactions).length > 0">
+		<ion-list no-border >
+      <ion-list-header>
+        Recent Transactions
+      </ion-list-header>
+      <ion-item *ngFor="let transaction of transactions" text-wrap>
+          {{transaction.store}}
+          <ion-note item-end>{{displayDate(transaction.date)}}</ion-note>
+      </ion-item>
+    </ion-list>
+	</div>
 
 </ion-content>
