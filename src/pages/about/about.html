@@ -17,7 +17,7 @@
       <ion-list-header>
         Recent Transactions
       </ion-list-header>
-      <ion-item *ngFor="let transaction of transactions" text-wrap>
+      <ion-item *ngFor="let transaction of transactions; let i = index" text-wrap (click)="openDetailPage(i)">
           {{transaction.store}}
           <ion-note item-end>{{displayDate(transaction.date)}}</ion-note>
       </ion-item>

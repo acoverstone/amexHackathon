@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
+import { TransactionDetailPage } from '../../pages/transaction-detail/transaction-detail'
 
 
 class ShoppingItem {
@@ -56,7 +57,6 @@ export class AboutPage {
 			snapshot.forEach(snapshot => {
 	      this.transactions.push(snapshot.val()); 
 	    });
-	    console.log(this.transactions);
 
     });
   	
@@ -65,6 +65,12 @@ export class AboutPage {
   private displayDate(timestamp: number) {
   	var date: Date = new Date(timestamp);
   	return date.toDateString();
+  }
+
+  private openDetailPage(i: number) {
+  	this.navCtrl.push(TransactionDetailPage, {
+  		param1: this.transactions[i]
+  	});
   }
 
 }

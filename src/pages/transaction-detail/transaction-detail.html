@@ -1,0 +1,40 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Transaction Detail</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+
+<div *ngIf="(shoppingCart).length > 0">
+    <ion-list no-border >
+      <ion-list-header>
+        {{store}} - {{date}}
+      </ion-list-header>
+      <ion-item-sliding *ngFor="let shopItem of shoppingCart" #slidingItem>
+        <ion-item text-wrap>
+          <ion-note item-start class="quantity">{{shopItem.quantity}}</ion-note>
+          {{shopItem.name}}
+          <ion-note item-end>$ {{shopItem.price}}</ion-note>
+        </ion-item>
+        <ion-item-options side="left">
+          <button ion-button color="danger"><ion-icon name="ios-trash" (click)="removeItemFromCart(shopItem.name)"></ion-icon></button>
+        </ion-item-options>
+      </ion-item-sliding>
+
+    </ion-list>
+
+    <ion-list no-border>
+      <ion-list-header>
+        Total
+      </ion-list-header>
+      <ion-item>Tax: $ {{calculateTax()}}</ion-item>
+      <ion-item>Final Price: $ {{calculateFinalPrice()}}</ion-item>
+    </ion-list>
+
+
+  </div>
+
+</ion-content>
