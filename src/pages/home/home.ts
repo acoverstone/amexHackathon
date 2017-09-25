@@ -50,6 +50,7 @@ export class HomePage {
 	data: Observable<any>;
   shoppingCart: Array<ShoppingItem> = [];
   selectedStore: string = "";
+  selectedCard: string = "";
 
   constructor(public navCtrl: NavController, public db: AngularFireDatabase, private scanner: BarcodeScanner, private upcProvider: UpcProvider, private alertCtrl: AlertController, public http: Http) {
     
@@ -61,11 +62,18 @@ export class HomePage {
 
 
       // For testing in browswer
-      this.data = this.upcProvider.getItem("073430005044");
+      this.data = this.upcProvider.getItems();
 
-      this.data.subscribe(
-        value => this.addItemToCart(value.itemname, value.avg_price)
-      );
+      this.data.subscribe(snapshot => {
+
+        snapshot.forEach(snapshot => {
+            if(snapshot.key == "073430005044") {
+              var item = snapshot.val();
+              this.addItemToCart(item.name, item.price);
+            }
+        });
+
+     });
 
       // For use on the phone
     	// this.scanner.scan().then((barcodeData) => {
@@ -76,21 +84,28 @@ export class HomePage {
      //      return false;
      //    }
 
-     //    this.data = this.upcProvider.getItem(barcodeData.text);
-     //    this.data.subscribe(
-     //      value => this.addItemToCart(value.itemname, value.avg_price)
-     //    );
+     //    this.data = this.upcProvider.getItems();
 
+     //    this.data.subscribe(snapshot => {
+
+     //      snapshot.forEach(snapshot => {
+     //          if(snapshot.key == barcodeData.text) {
+     //            var item = snapshot.val();
+     //            this.addItemToCart(item.name, item.price);
+     //          }
+     //      });
+
+     //    });
      //  }, (err) => {
      //    console.log(err);
      //  });
-    } else {
-      let alert = this.alertCtrl.create({
-        title: 'Select A Store',
-        subTitle: 'Please select a store from the dropdown before scanning items.',
-        buttons: ['Dismiss']
-      });
-      alert.present();
+    // } else {
+    //   let alert = this.alertCtrl.create({
+    //     title: 'Select A Store',
+    //     subTitle: 'Please select a store from the dropdown before scanning items.',
+    //     buttons: ['Dismiss']
+    //   });
+    //   alert.present();
     }
   }
 
@@ -116,9 +131,7 @@ export class HomePage {
 
   // clears all items out of the cart
   private clearCart() {
-    for(let i in this.shoppingCart) {
-      this.shoppingCart.splice(Number(i), 1);
-    }
+    this.shoppingCart = [];
   }
 
   // returns index if specified item is in cart, returns -1 otherwise
@@ -152,37 +165,48 @@ export class HomePage {
 
 
   private checkout() {
-    let alert = this.alertCtrl.create({
-      title: 'Confirm Checkout',
-      message: 'Are you sure you want to make this purchase automatically charged to your American Express account for a total of $' + this.calculateFinalPrice() + '?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Confirm',
-          handler: () => {
-            var transaction: Transaction = new Transaction();
-            transaction.cart = this.shoppingCart;
-            transaction.store = this.selectedStore;
+    if(this.selectedCard != '') {
+      let alert = this.alertCtrl.create({
+        title: 'Confirm Checkout',
+        message: 'Are you sure you want to make this purchase automatically charged to your American Express account for a total of $' + this.calculateFinalPrice() + '?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancel clicked');
+            }
+          },
+          {
+            text: 'Confirm',
+            handler: () => {
+              var transaction: Transaction = new Transaction();
+              transaction.cart = this.shoppingCart;
+              transaction.store = this.selectedStore;
 
-            this.db.list('/transactions').push(transaction);
-            this.clearCart();
-            let alert = this.alertCtrl.create({
-              title: 'Thank You',
-              message: 'Your payment is being processed and will be reflected on your American Express card balance soon.',
-              buttons: ['Dismiss']
-            });
-            alert.present();
+              this.db.list('/transactions').push(transaction);
+              this.clearCart();
+              let alert = this.alertCtrl.create({
+                title: 'Thank You',
+                message: 'Your payment is being processed and will be reflected on your American Express card balance soon.',
+                buttons: ['Dismiss']
+              });
+              alert.present();
+            }
           }
-        }
-      ]
-    });
-    alert.present();
+        ]
+      });
+      alert.present();
+    } else {
+
+      let alert = this.alertCtrl.create({
+        title: 'Error',
+        message: 'Please select a valid payment method.',
+        buttons: ['Dismiss']
+      });
+      alert.present();
+      
+    }
   }
 
 

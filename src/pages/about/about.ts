@@ -49,13 +49,13 @@ export class AboutPage {
 	transactions: Array<Transaction> = [];
 
   constructor(public navCtrl: NavController, public db: AngularFireDatabase) {
-  	this.transactions = []
+  	this.transactions.splice(0, this.transactions.length);
   	this.data = db.list('/transactions', {preserveSnapshot:true});
   	
   	this.data.subscribe(snapshot => {
 
 			snapshot.forEach(snapshot => {
-	      this.transactions.push(snapshot.val()); 
+	      this.transactions.unshift(snapshot.val()); 
 	    });
 
     });

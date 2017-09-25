@@ -2,7 +2,7 @@
   <ion-navbar>
     <ion-title>Checkout</ion-title>
     <ion-buttons end>
-      <button ion-button color="dark" (click)="scanPhoto()">Scan</button>
+      <button ion-button color="dark" (click)="scanPhoto()" *ngIf="selectedStore != ''">Scan</button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
@@ -52,6 +52,15 @@
       </ion-list-header>
       <ion-item>Tax: $ {{calculateTax()}}</ion-item>
       <ion-item>Final Price: $ {{calculateFinalPrice()}}</ion-item>
+      <ion-item>
+        <ion-label>
+          Payment Option
+        </ion-label>
+        <ion-select [(ngModel)]="selectedCard">
+          <ion-option value="blueCash">Blue Cash Rewards - 10001</ion-option>
+          <ion-option value="Walmart">Gold Rewards Card - 45000</ion-option>
+        </ion-select>
+    </ion-item>
     </ion-list>
 
     <ion-buttons text-center>
@@ -60,6 +69,7 @@
     </ion-buttons>
 
   </div>
+
   
 
 </ion-content>
